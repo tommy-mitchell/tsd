@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import meow from 'meow';
+import ora from 'ora';
 import formatter from './lib/formatter';
 import tsd from './lib';
 
@@ -44,6 +45,8 @@ const cli = meow(`
 	},
 });
 
+const spinner = ora();
+
 /**
  * Displays a message and exits, conditionally erroring.
  *
@@ -51,6 +54,8 @@ const cli = meow(`
  * @param isError Whether or not to fail on exit.
  */
 const exit = (message: string, {isError = true}: {isError?: boolean} = {}) => {
+	spinner.stop();
+
 	if (isError) {
 		console.error(message);
 		process.exit(1);
@@ -62,6 +67,8 @@ const exit = (message: string, {isError = true}: {isError?: boolean} = {}) => {
 
 (async () => {
 	try {
+		spinner.start();
+
 		const cwd = cli.input.length > 0 ? cli.input[0] : process.cwd();
 		const {typings: typingsFile, files: testFiles, showDiff} = cli.flags;
 
